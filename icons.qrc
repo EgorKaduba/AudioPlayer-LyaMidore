@@ -1,0 +1,21 @@
+<RCC>
+  <qresource>
+    <file>icons/append.png</file>
+    <file>icons/back.png</file>
+    <file>icons/logo.png</file>
+    <file>icons/moon.png</file>
+    <file>icons/new_playlist1.png</file>
+    <file>icons/new_playlist.png</file>
+    <file>icons/next.png</file>
+    <file>icons/pause.png</file>
+    <file>icons/pause_black.png</file>
+    <file>icons/repeat.png</file>
+    <file>icons/search.png</file>
+    <file>icons/search_black.svg</file>
+    <file>icons/shuffle.png</file>
+    <file>icons/sun.svg</file>
+    <file>icons/volume.png</file>
+    <file>icons/window_icon.png</file>
+  </qresource>
+  <qresource prefix="newPrefix"/>
+</RCC>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QWidget" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>470</width>
+    <height>470</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>470</width>
+    <height>470</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>470</width>
+    <height>470</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#MainWindow {
+	background-color: rgba(56, 56, 56, 1);
+	min-width: 470px;
+	max-width: 470px;
+	min-height: 470px;
+	max-height: 470px;
+}
+
+QPushButton#foto_btn {
+	background-color: rgba(217, 217, 217, 1);
+	border-image: url(icons/playlist_test.jpg);
+	border-radius: 15px;
+	min-width: 156px;
+	max-width: 156px;
+	min-height: 171px;
+	max-height: 171px;
+}
+
+QLineEdit#name {
+	background-color: rgba(217, 217, 217, 0.2);
+	color: rgba(0, 0, 0, 0.62);
+	border-radius: 8px;
+	border: 2px solid rgba(0, 0, 0, 0.5);
+	min-width: 225px;
+	max-width: 225px;
+	min-height: 30px;
+	max-height: 30px;
+}
+
+QPushButton#cancel_btn, QPushButton#add_btn {
+	background-color: rgba(217, 217, 217, 0.2);
+	border: 2px solid rgba(0, 0, 0, 0.5);
+	border-radius: 7px;
+	min-width: 130px;
+	max-width: 130px;
+	min-height: 40px;
+	max-height: 40px;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="foto_widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>20</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>50</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="foto_btn">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="name_widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLineEdit" name="name">
+        <property name="minimumSize">
+         <size>
+          <width>229</width>
+          <height>34</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>229</width>
+          <height>34</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Новый плейлист</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="btn_spacer_widget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>106</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QWidget" name="btn_widget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QPushButton" name="cancel_btn">
+           <property name="text">
+            <string>Отмена</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="add_btn">
+           <property name="text">
+            <string>Добавить</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
