@@ -90,9 +90,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.playlist_cnt += 1
         self.playlist.append(new_widget)
 
-    def open_playlist(self, name):
-        print(name)
-
     def my_signal(self, click=False):
         if click:
             self.ThemeSlider.setValue(0 if self.ThemeSlider.value() else 1)
@@ -693,7 +690,7 @@ class PlaylistWidget(QtWidgets.QWidget):
 
         foto_btn = QtWidgets.QPushButton()
         foto_btn.setObjectName(f"{self.name}_foto")
-        foto_btn.clicked.connect(lambda: self.open_playlist(self.name))
+        foto_btn.clicked.connect(lambda: print(self.name))
         foto_btn.setToolTip("Нажми на меня, чтобы открыть плейлист")
         foto_btn.setToolTipDuration(1500)
         foto_btn.setStyleSheet(
