@@ -1,3 +1,5 @@
+import csv
+
 from PyQt5 import QtWidgets, QtCore, uic, QtGui
 import sys
 from colors import colors
@@ -26,10 +28,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.volume_slider.setTracking(False)
         self.volume_slider.valueChanged.connect(self.change_volume)
 
-        self.add_widget_to_music_list("test_music_1", "Egor")
-        self.add_widget_to_music_list("test_music_2", "Maxim")
-        self.add_widget_to_playlist("test_playlist_1")
-        self.add_widget_to_playlist("test_playlist_2")
+        self.add_widget_to_music_list("music/test.mp3", "test_music_1", "Egor")
+        self.add_widget_to_music_list("music/test.mp3", "test_music_2", "Maxim")
+        self.download_playlists()
 
         self.widget_set_icon()
         self.set_style()
@@ -68,9 +69,9 @@ class MainWindow(QtWidgets.QMainWindow):
             path, name = widget.foto_path, widget.name.text()
             self.add_widget_to_playlist(name, path)
 
-    def add_widget_to_music_list(self, name: str, author: str, foto_path='icons/music_test.jpg'):
+    def add_widget_to_music_list(self, path, name: str, author: str, foto_path='icons/music_test.jpg'):
 
-        new_widget = MusicWidget(name, author)
+        new_widget = MusicWidget(path, name, author, foto_path)
 
         self.music_list_layout.insertWidget(0, new_widget)
         if self.music_cnt > 0:
@@ -79,57 +80,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.music_cnt += 1
         self.music_list.append(new_widget)
 
-    def add_widget_to_playlist(self, name: str, foto_path='icons/playlist_test.jpg', track_cnt=0):
-        name = name.strip().replace(' ', '_-_')
-        new_widget = QtWidgets.QWidget()
-        new_widget.setObjectName(name)
+    def add_widget_to_playlist(self, name: str, foto_path='icons/playlist_test.jpg'):
+        new_widget = PlaylistWidget(name, foto_path)
 
-        playlist_layout = QtWidgets.QVBoxLayout()
-        playlist_layout.setObjectName(f"{name}_layout")
-
-        foto_btn = QtWidgets.QPushButton()
-        foto_btn.setObjectName(f"{name}_foto")
-        foto_btn.clicked.connect(lambda: self.open_playlist(name))
-        foto_btn.setToolTip("Нажми на меня, чтобы открыть плейлист")
-        foto_btn.setToolTipDuration(1500)
-        foto_btn.setStyleSheet(
-            f"""
-            QPushButton#{name}_foto {{
-                border-image: url({foto_path});
-                background-color: {colors[self.theme_status]['playlist_foto']};
-                border-radius: 10px;
-                min-width: 100px;
-                min-height: 100px;
-                max-width: 100px;
-                max-height: 100px;
-                margin: 10 0 5 40;
-            }}
-            """)
-
-        playlist_name = QtWidgets.QLabel(name.replace('_-_', ' '))
-        playlist_name.setObjectName(f"{name}_name")
-        playlist_name.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)  # noqa
-
-        track_cnt = QtWidgets.QLabel(f"{track_cnt} треков")
-        track_cnt.setObjectName(f"{name}_cnt")
-        track_cnt.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)  # noqa
-
-        playlist_layout.addWidget(foto_btn)
-        playlist_layout.addWidget(playlist_name)
-        playlist_layout.addWidget(track_cnt)
-
-        playlist_layout.setContentsMargins(0, 0, 0, 0)
-        playlist_layout.setSpacing(0)
-
-        new_widget.setLayout(playlist_layout)
-        new_widget.setContentsMargins(0, 0, 0, 0)
         self.playlist_layout.insertWidget(0, new_widget)
         if self.playlist_cnt > 0:
             self.playlist_layout_height += 200
             self.scrollAreaWidgetContents_playlist.setMinimumHeight(self.playlist_layout_height)
         self.playlist_cnt += 1
         self.playlist.append(new_widget)
-        self.set_style()
 
     def open_playlist(self, name):
         print(name)
@@ -255,10 +214,10 @@ class MainWindow(QtWidgets.QMainWindow):
             f"""
             QSlider {{
                 background: {colors[self.theme_status]['theme']};
-                border-radius: 20px;
+                border-radius: 15px;
             }}
             QSlider::groove:horizontal {{
-                height: 20px;
+                height: 15px;
                 background-color: rgb(170, 170, 170);
                 margin: 0px;
                 border-radius: 10px;
@@ -266,10 +225,9 @@ class MainWindow(QtWidgets.QMainWindow):
             }}
             QSlider::handle:horizontal {{
                 background: {colors[self.theme_status]['theme_handle']};
-                border: 1px solid #AAAAAA;
-                width: 30px;
+                width: 25px;
                 margin: -5px 0; 
-                border-radius: 15px;
+                border-radius: 12px;
             }}
             """)
         self.play_line_main_widget.setStyleSheet(
@@ -337,47 +295,7 @@ class MainWindow(QtWidgets.QMainWindow):
             """
         )
         for widget in self.playlist:
-            if self.theme_status == 'white':
-                widget.setGraphicsEffect(None)
-            else:
-                shadow_effect = QtWidgets.QGraphicsDropShadowEffect(
-                    offset=QtCore.QPoint(3, 3), blurRadius=25, color=QtGui.QColor("#111")  # noqa
-                )
-                widget.setGraphicsEffect(shadow_effect)
-            widget.setStyleSheet(
-                f"""
-                QWidget#{widget.objectName()} {{
-                    background-color: {colors[self.theme_status]['playlist']};
-                    border-radius: 7px;
-                    min-width: 180px;
-                    min-height: 180px;
-                    max-width: 180px;
-                    max-height: 180px;
-                }}
-                QPushButton#{widget.objectName()}_foto {{
-                    background-color: {colors[self.theme_status]['playlist_foto']};
-                    border-radius: 10px;
-                    min-width: 100px;
-                    min-height: 100px;
-                    max-width: 100px;
-                    max-height: 100px;
-                    margin: 10 0 5 40;
-                }}
-                .QLabel#{widget.objectName()}_name {{
-                    color: {colors[self.theme_status]['text1']};
-                    margin-top: 5px;
-                    max-width: 180px;
-                    max-height: 20px;
-                    background-color: transparent;
-                    font-size: 17px;
-                }}
-                .QLabel#{widget.objectName()}_cnt {{
-                    color: {colors[self.theme_status]['text2']};
-                    max-width: 180px;
-                    background-color: transparent;
-                    font-size: 17px;
-                }}
-                """)
+            widget.set_style(self.theme_status)
         for widget in self.music_list:
             widget.set_style(self.theme_status)
 
@@ -388,8 +306,8 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             self.LogoIcon.setPixmap(QtGui.QPixmap("icons/logo.png"))
             self.SearchIcon.setPixmap(QtGui.QPixmap("icons/search_black.svg"))
-            self.SunIcon.setPixmap(QtGui.QPixmap("icons/sun.svg"))
-            self.MoonIcon.setPixmap(QtGui.QPixmap("icons/moon.png"))
+            self.SunIcon.setPixmap(QtGui.QPixmap("icons/sun.svg").scaled(QtCore.QSize(35, 35)))
+            self.MoonIcon.setPixmap(QtGui.QPixmap("icons/moon.png").scaled(QtCore.QSize(35, 35)))
             self.AddPlaylistBtn.setIcon(QtGui.QIcon("icons/new_plalist1.png"))
             self.AddMusicBtn.setIcon(QtGui.QIcon("icons/append.png"))
             self.back_btn.setIcon(QtGui.QIcon("icons/back.png"))
@@ -404,6 +322,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def hide_footer(self):
         self.Footer.hide()
         self.Main.setContentsMargins(0, 30, 0, 30)
+
+    def download_playlists(self):
+        with open("playlists/all_playlists.csv", "r", newline="", encoding="utf-8") as file:
+            reader = csv.reader(file)
+            for row in reader:
+                self.add_widget_to_playlist(row[0])
 
 
 class ModalWindowError(QtWidgets.QDialog):
@@ -474,6 +398,7 @@ class PlaylistAdd(QtWidgets.QDialog):
         self.setWindowTitle("Новый плейлист")
         self.resize(QtCore.QSize(470, 500))
         self.setObjectName("MainWindow")
+        self.name.setMaxLength(14)
 
         desktop = QtWidgets.QApplication.desktop()
         x = (desktop.width() // 2 - self.width() // 2)
@@ -560,29 +485,31 @@ class PlaylistAdd(QtWidgets.QDialog):
 
 
 class MusicWidget(QtWidgets.QWidget):
-    def __init__(self, name: str, author="Неизвестный исполнитель"):
+    def __init__(self, path: str, name: str, author="Неизвестный исполнитель", foto_path="icons/music_test.jpg"):
         super().__init__()
-        self.name = name
+        self.path = path
+        self.name = name.strip().replace(' ', '_-_')
         self.author = author
-        self.foto_path = 'icons/music_test.jpg'
+        self.foto_path = foto_path
+        self.flag = True
         self.set_widgets()
         self.set_style("black")
 
     def set_widgets(self):
         main_widget = QtWidgets.QWidget()
-        main_widget.setObjectName(self.name)
+        main_widget.setObjectName("MainWidget")
 
         music_layout = QtWidgets.QHBoxLayout()
         main_layout = QtWidgets.QHBoxLayout()
 
         foto_btn = QtWidgets.QPushButton()
-        foto_btn.setObjectName(f"{self.name}_foto")
+        foto_btn.setObjectName(f"foto")
         foto_btn.clicked.connect(lambda: print(self.name))
         foto_btn.setToolTip("Нажми на меня для запуска трека")
         foto_btn.setToolTipDuration(1500)
         foto_btn.setStyleSheet(
             f"""
-                    QPushButton#{self.name}_foto {{
+                    QPushButton#foto {{
                         border-image: url({self.foto_path});
                         background-color: {colors['black']['song_foto']};
                         border-radius: 4px;
@@ -596,44 +523,64 @@ class MusicWidget(QtWidgets.QWidget):
         foto_btn.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
 
         text_widget = QtWidgets.QWidget()
-        text_widget.setObjectName(f"{self.name}_text")
+        text_widget.setObjectName(f"text")
 
         text_layout = QtWidgets.QVBoxLayout()
-        text_layout.setObjectName(f"{self.name}_text_layout")
+        text_layout.setObjectName(f"text_layout")
 
         name_layout = QtWidgets.QHBoxLayout()
         name_layout.setAlignment(QtCore.Qt.AlignLeft)  # noqa
-        music_name_label = QtWidgets.QLabel(self.name.replace('_-_', ' '))
-        music_name_label.setObjectName(f"{self.name}_name")
+        music_name_line_edit = QtWidgets.QLineEdit(self.name.replace('_-_', ' '))
+        music_name_line_edit.setMaxLength(40)
+        music_name_line_edit.setObjectName(f"name")
+        music_name_line_edit.setEnabled(False)
 
-        change_btn = QtWidgets.QPushButton()
-        change_btn.setObjectName(f"{self.name}_change_btn")
-        change_btn.setIcon(QtGui.QIcon("icons/change.svg"))
+        name_layout.addWidget(music_name_line_edit)
 
-        name_layout.addWidget(music_name_label)
-        name_layout.addWidget(change_btn)
-
-        music_author_label = QtWidgets.QLabel(self.author)
-        music_author_label.setObjectName(f"{self.name}_author")
-        music_author_label.setAlignment(QtCore.Qt.AlignTop)  # noqa
+        music_author_line_edit = QtWidgets.QLineEdit(self.author)
+        music_author_line_edit.setObjectName(f"author")
+        music_author_line_edit.setAlignment(QtCore.Qt.AlignTop)  # noqa
+        music_author_line_edit.setMaxLength(40)
+        music_author_line_edit.setEnabled(False)
 
         text_layout.addLayout(name_layout)
-        text_layout.addWidget(music_author_label)
+        text_layout.addWidget(music_author_line_edit)
 
         text_layout.setSpacing(0)
         text_layout.setContentsMargins(0, 0, 0, 0)
 
         text_widget.setLayout(text_layout)
 
+        right_widget = QtWidgets.QWidget()
+        right_widget.setObjectName(f"duration_widget")
+        right_layout = QtWidgets.QHBoxLayout()
+        right_layout.setSpacing(0)
+        right_layout.setContentsMargins(0, 0, 0, 0)
+
         duration_label = QtWidgets.QLabel("2:33")
-        duration_label.setObjectName(f"{self.name}_duration")
+        duration_label.setObjectName(f"duration_lbl")
         duration_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)  # noqa
+
+        change_btn = QtWidgets.QPushButton()
+        change_btn.setObjectName(f"change_btn")
+        change_btn.clicked.connect(lambda: self.my_signal(music_name_line_edit, music_author_line_edit, change_btn))
+        change_btn.setIcon(QtGui.QIcon("icons/change.svg"))
+
+        love_btn = QtWidgets.QPushButton()
+        love_btn.setIconSize(QtCore.QSize(16, 16))
+        love_btn.setObjectName(f"love_btn")
+        love_btn.setIcon(QtGui.QIcon("icons/love_0.svg"))
+
+        right_layout.addWidget(love_btn)
+        right_layout.addWidget(change_btn)
+        right_layout.addWidget(duration_label)
+        right_widget.setLayout(right_layout)
 
         music_layout.addWidget(foto_btn)
         music_layout.addWidget(text_widget)
-        music_layout.addWidget(duration_label)
+        music_layout.addWidget(right_widget)
 
-        music_layout.setObjectName(f"{self.name}_layout")
+        music_layout.setObjectName(f"layout")
         music_layout.setSpacing(0)
         music_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -654,13 +601,13 @@ class MusicWidget(QtWidgets.QWidget):
             self.setGraphicsEffect(shadow_effect)
         self.setStyleSheet(
             f"""
-            QWidget#{self.name} {{
+            QWidget#MainWidget {{
                 background-color: {colors[theme_status]['song']};
                 border-radius: 7px;
                 min-height: 70px;
                 max-height: 70px;
             }}
-            QPushButton#{self.name}_foto {{
+            QPushButton#foto {{
                 background-color: {colors[theme_status]['song_foto']};
                 border-radius: 4px;
                 min-width: 60px;
@@ -669,7 +616,7 @@ class MusicWidget(QtWidgets.QWidget):
                 max-height: 60px;
                 margin: 5 5 5 10;
             }}
-            QPushButton#{self.name}_change_btn {{
+            QPushButton#change_btn, QPushButton#love_btn {{
                 background-color: transparent;
                 border: none;
                 min-width: 20px;
@@ -678,25 +625,34 @@ class MusicWidget(QtWidgets.QWidget):
                 max-height: 20px;
                 margin-left: 10px;
             }}
-            QPushButton#{self.name}_change_btn:hover {{
+            QPushButton#change_btn:hover, QPushButton#love_btn:hover {{
                 background-color: rgba(75, 75, 75, 0.55);
                 border-radius: 5px;
             }}
-            QWidget#{self.name}_text {{
+            QWidget#text {{
                 background-color: transparent;
                 max-height: 65px;
             }}
-            QLabel#{self.name}_name {{
+            QLineEdit#name {{
                 background-color: transparent;
+                border: none;
                 color: {colors[theme_status]['text1']};
                 font-size: 21px;
             }}
-            QLabel#{self.name}_author {{
+            QLineEdit#name:hover, QLineEdit#author:hover {{
+                border: none;
+            }}
+            QLineEdit#author {{
                 background-color: transparent;
+                border: none;
                 color: {colors[theme_status]['text2']};
                 font-size: 21px;
             }}
-            QWidget#{self.name}_duration {{
+            QWidget#duration_widget {{
+                background-color: transparent;
+                max-width: 125px;
+            }}
+            QWidget#duration_lbl {{
                 background-color: transparent;
                 margin: 0 10 0 5;
                 font-size: 21px;
@@ -704,6 +660,121 @@ class MusicWidget(QtWidgets.QWidget):
             }}
             """
         )
+
+    def my_signal(self, name_line_edit, author_line_edit, btn):
+        if self.flag:
+            name_line_edit.setEnabled(True)
+            author_line_edit.setEnabled(True)
+            btn.setIcon(QtGui.QIcon("icons/accept.svg"))
+        else:
+            self.name = name_line_edit.text().strip().replace(' ', '_-_')
+            name_line_edit.setEnabled(False)
+            author_line_edit.setEnabled(False)
+            btn.setIcon(QtGui.QIcon("icons/change.svg"))
+        self.flag = not self.flag
+
+
+class PlaylistWidget(QtWidgets.QWidget):
+    def __init__(self, name: str, foto_path="icons/playlist_test.jpg"):
+        super().__init__()
+        self.name = name.strip().replace(' ', '_-_')
+        self.foto_path = foto_path
+        self.set_widget()
+        self.set_style()
+
+    def set_widget(self, theme_status="black"):
+        main_layout = QtWidgets.QVBoxLayout()
+
+        main_widget = QtWidgets.QWidget()
+        main_widget.setObjectName(self.name)
+
+        playlist_layout = QtWidgets.QVBoxLayout()
+        playlist_layout.setObjectName(f"{self.name}_layout")
+
+        foto_btn = QtWidgets.QPushButton()
+        foto_btn.setObjectName(f"{self.name}_foto")
+        foto_btn.clicked.connect(lambda: self.open_playlist(self.name))
+        foto_btn.setToolTip("Нажми на меня, чтобы открыть плейлист")
+        foto_btn.setToolTipDuration(1500)
+        foto_btn.setStyleSheet(
+            f"""
+                    QPushButton#{self.name}_foto {{
+                        border-image: url({self.foto_path});
+                        background-color: {colors[theme_status]['playlist_foto']};
+                        border-radius: 10px;
+                        min-width: 100px;
+                        min-height: 100px;
+                        max-width: 100px;
+                        max-height: 100px;
+                        margin: 10 0 5 40;
+                    }}
+                    """)
+
+        playlist_name = QtWidgets.QLabel(self.name.replace('_-_', ' '))
+        playlist_name.setObjectName(f"{self.name}_name")
+        playlist_name.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)  # noqa
+
+        track_cnt = QtWidgets.QLabel(f"{0} треков")
+        track_cnt.setObjectName(f"{self.name}_cnt")
+        track_cnt.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)  # noqa
+
+        playlist_layout.addWidget(foto_btn)
+        playlist_layout.addWidget(playlist_name)
+        playlist_layout.addWidget(track_cnt)
+
+        playlist_layout.setContentsMargins(0, 0, 0, 0)
+        playlist_layout.setSpacing(0)
+
+        main_widget.setLayout(playlist_layout)
+
+        main_layout.addWidget(main_widget)
+        main_layout.setSpacing(0)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.setLayout(main_layout)
+
+    def set_style(self, theme_status="black"):
+        if theme_status == 'white':
+            self.setGraphicsEffect(None)
+        else:
+            shadow_effect = QtWidgets.QGraphicsDropShadowEffect(
+                offset=QtCore.QPoint(3, 3), blurRadius=25, color=QtGui.QColor("#111")  # noqa
+            )
+            self.setGraphicsEffect(shadow_effect)
+        self.setStyleSheet(
+            f"""
+            QWidget#{self.name} {{
+                background-color: {colors[theme_status]['playlist']};
+                border-radius: 7px;
+                min-width: 180px;
+                min-height: 180px;
+                max-width: 180px;
+                max-height: 180px;
+            }}
+            QPushButton#{self.name}_foto {{
+                background-color: {colors[theme_status]['playlist_foto']};
+                border-radius: 10px;
+                min-width: 100px;
+                min-height: 100px;
+                max-width: 100px;
+                max-height: 100px;
+                margin: 10 0 5 40;
+            }}
+            .QLabel#{self.name}_name {{
+                color: {colors[theme_status]['text1']};
+                margin-top: 5px;
+                max-width: 180px;
+                max-height: 20px;
+                background-color: transparent;
+                font-size: 17px;
+            }}
+            .QLabel#{self.name}_cnt {{
+                color: {colors[theme_status]['text2']};
+                max-width: 180px;
+                background-color: transparent;
+                font-size: 17px;
+            }}
+            """)
 
 
 if __name__ == "__main__":
