@@ -27,7 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.volume_slider.valueChanged.connect(self.change_volume)
 
         self.add_widget_to_music_list("test_music_1", "Egor")
-        self.add_widget_to_music_list("test_music_2фффффффффффффффффффффффффффффффф", "Maxim")
+        self.add_widget_to_music_list("test_music_2", "Maxim")
         self.add_widget_to_playlist("test_playlist_1")
         self.add_widget_to_playlist("test_playlist_2")
 
@@ -69,76 +69,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.add_widget_to_playlist(name, path)
 
     def add_widget_to_music_list(self, name: str, author: str, foto_path='icons/music_test.jpg'):
-        name = name.strip().replace(' ', '_-_')
 
-        new_widget = QtWidgets.QWidget()
-        new_widget.setObjectName(name)
-
-        music_layout = QtWidgets.QHBoxLayout()
-
-        foto_btn = QtWidgets.QPushButton()
-        foto_btn.setObjectName(f"{name}_foto")
-        foto_btn.clicked.connect(lambda: print(name))
-        foto_btn.setToolTip("Нажми на меня для запуска трека")
-        foto_btn.setToolTipDuration(1500)
-        foto_btn.setStyleSheet(
-            f"""
-            QPushButton#{name}_foto {{
-                border-image: url({foto_path});
-                background-color: {colors[self.theme_status]['song_foto']};
-                border-radius: 4px;
-                min-width: 60px;
-                max-width: 60px;
-                min-height: 60px;
-                max-height: 60px;
-                margin: 5 5 5 10;
-            }}
-            """)
-        foto_btn.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-
-        text_widget = QtWidgets.QWidget()
-        text_widget.setObjectName(f"{name}_text")
-
-        text_layout = QtWidgets.QVBoxLayout()
-        text_layout.setObjectName(f"{name}_text_layout")
-
-        name_layout = QtWidgets.QHBoxLayout()
-        name_layout.setAlignment(QtCore.Qt.AlignLeft)  # noqa
-        music_name_label = QtWidgets.QLabel(name.replace('_-_', ' '))
-        music_name_label.setObjectName(f"{name}_name")
-
-        change_btn = QtWidgets.QPushButton()
-        change_btn.setObjectName(f"{name}_change_btn")
-        change_btn.setIcon(QtGui.QIcon("icons/change.svg"))
-
-        name_layout.addWidget(music_name_label)
-        name_layout.addWidget(change_btn)
-
-        music_author_label = QtWidgets.QLabel(author)
-        music_author_label.setObjectName(f"{name}_author")
-        music_author_label.setAlignment(QtCore.Qt.AlignTop)  # noqa
-
-        text_layout.addLayout(name_layout)
-        text_layout.addWidget(music_author_label)
-
-        text_layout.setSpacing(0)
-        text_layout.setContentsMargins(0, 0, 0, 0)
-
-        text_widget.setLayout(text_layout)
-
-        duration_label = QtWidgets.QLabel("2:33")
-        duration_label.setObjectName(f"{name}_duration")
-        duration_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)  # noqa
-
-        music_layout.addWidget(foto_btn)
-        music_layout.addWidget(text_widget)
-        music_layout.addWidget(duration_label)
-
-        music_layout.setObjectName(f"{name}_layout")
-        music_layout.setSpacing(0)
-        music_layout.setContentsMargins(0, 0, 0, 0)
-
-        new_widget.setLayout(music_layout)
+        new_widget = MusicWidget(name, author)
 
         self.music_list_layout.insertWidget(0, new_widget)
         if self.music_cnt > 0:
@@ -274,7 +206,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QWidget#footer_widget QWidget {{
                 background: none;
             }}
-            
+
             QPushButton {{
                 border: none;
                 min-width: 50px;
@@ -282,7 +214,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 min-height: 50px;
                 max-height: 50px;
             }}
-            
+
             QWidget#sound>QPushButton {{
                 margin: 0 -5 0 -5;
             }}
@@ -300,7 +232,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 border: none;
                 height: 3px;
             }}
-            
+
             QSlider::handle:horizontal {{
                 background: {colors[self.theme_status]['volume_slider_handle']};
                 border: none;
@@ -311,7 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QSlider::add-page {{
                 background: {colors[self.theme_status]['volume_slider_background_add_page']};
             }}
-            
+
             QSlider::sub-page {{
                 background: {colors[self.theme_status]['volume_slider_background_sub_page']};
             }}
@@ -447,65 +379,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 }}
                 """)
         for widget in self.music_list:
-            if self.theme_status == 'white':
-                widget.setGraphicsEffect(None)
-            else:
-                shadow_effect = QtWidgets.QGraphicsDropShadowEffect(
-                    offset=QtCore.QPoint(3, 3), blurRadius=25, color=QtGui.QColor("#111")  # noqa
-                )
-                widget.setGraphicsEffect(shadow_effect)
-            widget.setStyleSheet(
-                f"""
-                QWidget#{widget.objectName()} {{
-                    background-color: {colors[self.theme_status]['song']};
-                    border-radius: 7px;
-                    min-height: 70px;
-                    max-height: 70px;
-                }}
-                .QPushButton#{widget.objectName()}_foto {{
-                    background-color: {colors[self.theme_status]['song_foto']};
-                    border-radius: 4px;
-                    min-width: 60px;
-                    max-width: 60px;
-                    min-height: 60px;
-                    max-height: 60px;
-                    margin: 5 5 5 10;
-                }}
-                QPushButton#{widget.objectName()}_change_btn {{
-                    background-color: transparent;
-                    border: none;
-                    min-width: 20px;
-                    max-width: 20px;
-                    min-height: 20px;
-                    max-height: 20px;
-                    margin-left: 10px;
-                }}
-                QPushButton#{widget.objectName()}_change_btn:hover {{
-                    background-color: rgba(75, 75, 75, 0.55);
-                    border-radius: 5px;
-                }}
-                QWidget#{widget.objectName()}_text {{
-                    background-color: transparent;
-                    max-height: 65px;
-                }}
-                QLabel#{widget.objectName()}_name {{
-                    background-color: transparent;
-                    color: {colors[self.theme_status]['text1']};
-                    font-size: 21px;
-                }}
-                QLabel#{widget.objectName()}_author {{
-                    background-color: transparent;
-                    color: {colors[self.theme_status]['text2']};
-                    font-size: 21px;
-                }}
-                QWidget#{widget.objectName()}_duration {{
-                    background-color: transparent;
-                    margin: 0 10 0 5;
-                    font-size: 21px;
-                    color: {colors[self.theme_status]['text1']};
-                }}
-                """
-            )
+            widget.set_style(self.theme_status)
 
     def widget_set_icon(self):
         """
@@ -650,7 +524,8 @@ class PlaylistAdd(QtWidgets.QDialog):
             QPushButton#foto_btn:hover {{
                 background-color: {colors[theme]['song_foto']};
                 border-image: url(icons/playlist_test.jpg);
-                border: 3px solid transparent;
+                border-top: 2px solid black;
+                border-left: 2px solid black;
                 border-radius: 15px;
                 min-width: 156px;
                 max-width: 156px;
@@ -682,6 +557,153 @@ class PlaylistAdd(QtWidgets.QDialog):
 
     def add_playlist(self):
         self.accept()
+
+
+class MusicWidget(QtWidgets.QWidget):
+    def __init__(self, name: str, author="Неизвестный исполнитель"):
+        super().__init__()
+        self.name = name
+        self.author = author
+        self.foto_path = 'icons/music_test.jpg'
+        self.set_widgets()
+        self.set_style("black")
+
+    def set_widgets(self):
+        main_widget = QtWidgets.QWidget()
+        main_widget.setObjectName(self.name)
+
+        music_layout = QtWidgets.QHBoxLayout()
+        main_layout = QtWidgets.QHBoxLayout()
+
+        foto_btn = QtWidgets.QPushButton()
+        foto_btn.setObjectName(f"{self.name}_foto")
+        foto_btn.clicked.connect(lambda: print(self.name))
+        foto_btn.setToolTip("Нажми на меня для запуска трека")
+        foto_btn.setToolTipDuration(1500)
+        foto_btn.setStyleSheet(
+            f"""
+                    QPushButton#{self.name}_foto {{
+                        border-image: url({self.foto_path});
+                        background-color: {colors['black']['song_foto']};
+                        border-radius: 4px;
+                        min-width: 60px;
+                        max-width: 60px;
+                        min-height: 60px;
+                        max-height: 60px;
+                        margin: 5 5 5 10;
+                    }}
+                    """)
+        foto_btn.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+
+        text_widget = QtWidgets.QWidget()
+        text_widget.setObjectName(f"{self.name}_text")
+
+        text_layout = QtWidgets.QVBoxLayout()
+        text_layout.setObjectName(f"{self.name}_text_layout")
+
+        name_layout = QtWidgets.QHBoxLayout()
+        name_layout.setAlignment(QtCore.Qt.AlignLeft)  # noqa
+        music_name_label = QtWidgets.QLabel(self.name.replace('_-_', ' '))
+        music_name_label.setObjectName(f"{self.name}_name")
+
+        change_btn = QtWidgets.QPushButton()
+        change_btn.setObjectName(f"{self.name}_change_btn")
+        change_btn.setIcon(QtGui.QIcon("icons/change.svg"))
+
+        name_layout.addWidget(music_name_label)
+        name_layout.addWidget(change_btn)
+
+        music_author_label = QtWidgets.QLabel(self.author)
+        music_author_label.setObjectName(f"{self.name}_author")
+        music_author_label.setAlignment(QtCore.Qt.AlignTop)  # noqa
+
+        text_layout.addLayout(name_layout)
+        text_layout.addWidget(music_author_label)
+
+        text_layout.setSpacing(0)
+        text_layout.setContentsMargins(0, 0, 0, 0)
+
+        text_widget.setLayout(text_layout)
+
+        duration_label = QtWidgets.QLabel("2:33")
+        duration_label.setObjectName(f"{self.name}_duration")
+        duration_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)  # noqa
+
+        music_layout.addWidget(foto_btn)
+        music_layout.addWidget(text_widget)
+        music_layout.addWidget(duration_label)
+
+        music_layout.setObjectName(f"{self.name}_layout")
+        music_layout.setSpacing(0)
+        music_layout.setContentsMargins(0, 0, 0, 0)
+
+        main_widget.setLayout(music_layout)
+        main_layout.addWidget(main_widget)
+        main_layout.setSpacing(0)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.setLayout(main_layout)
+
+    def set_style(self, theme_status):
+        if theme_status == 'white':
+            self.setGraphicsEffect(None)
+        else:
+            shadow_effect = QtWidgets.QGraphicsDropShadowEffect(
+                offset=QtCore.QPoint(3, 3), blurRadius=25, color=QtGui.QColor("#111")  # noqa
+            )
+            self.setGraphicsEffect(shadow_effect)
+        self.setStyleSheet(
+            f"""
+            QWidget#{self.name} {{
+                background-color: {colors[theme_status]['song']};
+                border-radius: 7px;
+                min-height: 70px;
+                max-height: 70px;
+            }}
+            QPushButton#{self.name}_foto {{
+                background-color: {colors[theme_status]['song_foto']};
+                border-radius: 4px;
+                min-width: 60px;
+                max-width: 60px;
+                min-height: 60px;
+                max-height: 60px;
+                margin: 5 5 5 10;
+            }}
+            QPushButton#{self.name}_change_btn {{
+                background-color: transparent;
+                border: none;
+                min-width: 20px;
+                max-width: 20px;
+                min-height: 20px;
+                max-height: 20px;
+                margin-left: 10px;
+            }}
+            QPushButton#{self.name}_change_btn:hover {{
+                background-color: rgba(75, 75, 75, 0.55);
+                border-radius: 5px;
+            }}
+            QWidget#{self.name}_text {{
+                background-color: transparent;
+                max-height: 65px;
+            }}
+            QLabel#{self.name}_name {{
+                background-color: transparent;
+                color: {colors[theme_status]['text1']};
+                font-size: 21px;
+            }}
+            QLabel#{self.name}_author {{
+                background-color: transparent;
+                color: {colors[theme_status]['text2']};
+                font-size: 21px;
+            }}
+            QWidget#{self.name}_duration {{
+                background-color: transparent;
+                margin: 0 10 0 5;
+                font-size: 21px;
+                color: {colors[theme_status]['text1']};
+            }}
+            """
+        )
 
 
 if __name__ == "__main__":

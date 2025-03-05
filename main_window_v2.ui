@@ -1383,52 +1383,6 @@ QPushButton:pressed {
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QWidget" name="play_line_foto_widget" native="true">
-                    <property name="minimumSize">
-                     <size>
-                      <width>65</width>
-                      <height>65</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>65</width>
-                      <height>65</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_23">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="leftMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="play_line_foto_lbl">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
                    <widget class="QWidget" name="play_line_text" native="true">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1452,6 +1406,28 @@ QPushButton:pressed {
                      <property name="bottomMargin">
                       <number>0</number>
                      </property>
+                     <item>
+                      <widget class="QPushButton" name="play_line_foto_btn">
+                       <property name="minimumSize">
+                        <size>
+                         <width>50</width>
+                         <height>50</height>
+                        </size>
+                       </property>
+                       <property name="maximumSize">
+                        <size>
+                         <width>50</width>
+                         <height>50</height>
+                        </size>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">border-radius: 4px;</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
                      <item>
                       <layout class="QVBoxLayout" name="verticalLayout_6">
                        <item>
