@@ -33,7 +33,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.widget_set_icon()
         self.set_style()
-
         self.AddPlaylistBtn.clicked.connect(self.show_add_playlist)
         self.AddMusicBtn.clicked.connect(self.show_File_Dialog)
 
